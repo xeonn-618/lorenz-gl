@@ -57,7 +57,7 @@ class Tracer():
             # [Head -> End]   | Unwritten zeros
             a2 = self.history[self.head:, :]
 
-            return np.vstack((a1, a2))
+            return np.vstack((a1, a2))[:self.count]
 
         else:
             # [Start -> Head-1] | New part head is overwriting

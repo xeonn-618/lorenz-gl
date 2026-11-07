@@ -57,7 +57,7 @@ class Animator():
                 aColor = vec3(0.0, 1.0, 1.0);
                 
                 vec3 centered = aPos - vec3(0.0, 0.0, 25.0);
-                vec3 normalized = vec3(centered.x / (35.0 * 1.777), centered.y / 35.0, centered.z / 35.0);
+                vec3 normalized = vec3(centered.x / (35.0 * 1.777), centered.z / 35.0, centered.y / 35.0);
                 gl_Position = vec4(normalized + offset, 1.0);
             }
             ''',
