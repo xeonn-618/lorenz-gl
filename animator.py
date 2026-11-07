@@ -1,6 +1,7 @@
 import moderngl
 import moderngl_window as mglw
 from tracer import TRAIL_SIZE
+import glm
 
 class Window(mglw.WindowConfig):
     gl_version = (3, 3)
@@ -18,7 +19,7 @@ class Window(mglw.WindowConfig):
 
     def on_render(self, time: float, frametime: float):
         # Tell Animator to run and render the scene
-        self.animator.render_frame()
+        self.animator.render_frame(time)
 
 
 class Animator():
@@ -50,6 +51,7 @@ class Animator():
             in vec3 aPos;
             
             uniform vec3 offset;
+            uniform mat4 transform;
             
             out vec3 aColor;
 
@@ -58,7 +60,7 @@ class Animator():
                 
                 vec3 centered = aPos - vec3(0.0, 0.0, 25.0);
                 vec3 normalized = vec3(centered.x / (35.0 * 1.777), centered.z / 35.0, centered.y / 35.0);
-                gl_Position = vec4(normalized + offset, 1.0);
+                gl_Position = transform * vec4(normalized + offset, 1.0);
             }
             ''',
             fragment_shader="""
@@ -82,7 +84,12 @@ class Animator():
         # Set offset
         self.prog['offset'].value = (0.1, 0.0, 0.0)
 
-    def render_frame(self):
+        # Create transformation matrix
+        trans = glm.mat4(1.0)
+        trans = glm.rotate(trans, 1, glm.vec3(0.5, 0.5, 0.0))
+        self.prog['transform'].write(trans.to_bytes())
+
+    def render_frame(self, time: float):
         # Update the sim
         self.sim.update()
 
