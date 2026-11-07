@@ -1,6 +1,7 @@
 import numpy as np
 
-RING_BUFFER = 2000
+TRAIL_SIZE = 2000
+RING_BUFFER = TRAIL_SIZE
 
 class Tracer():
     def __init__(self, sigma, rho, beta, x, y, z):

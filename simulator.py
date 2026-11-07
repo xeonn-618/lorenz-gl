@@ -23,6 +23,16 @@ class Simulator():
         new_tracer  = Tracer(self.sigma, self.rho, self.beta, x, y, z)
         self.tracers.append(new_tracer)
 
+    def get_trails(self):
+        """ Return all the tracers' trails in a list
+        [tracer1_arr, tracer2_arr, ...]"""
+        
+        trails = []
+        for tracer in self.tracers:
+            trails.append(tracer.get_trail())
+        
+        return trails
+
     def update(self):
 
         # DEBUG
