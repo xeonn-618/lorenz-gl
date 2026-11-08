@@ -172,11 +172,17 @@ class Animator():
         self.current_frame += 1
 
 
-    def setup_headless(self):
+    def setup_headless(self, samples=16):
+        # Multisampling fbo
+        self.msaa_rb = self.ctx.renderbuffer((self.width, self.height), samples=samples)
+        self.msaa_fbo = self.ctx.framebuffer(color_attachments=[self.msaa_rb])
+
         # Create a window
-        self.color_rb = self.ctx.renderbuffer((self.width, self.height))
-        self.fbo = self.ctx.framebuffer(color_attachments=[self.color_rb])
-        self.fbo.use()
+        self.resolve_rb = self.ctx.renderbuffer((self.width, self.height), samples=0)
+        self.resolve_fbo = self.ctx.framebuffer(color_attachments=[self.resolve_rb])
+
+        # use multisample fbo
+        self.msaa_fbo.use()
 
     def run(self):
         # If windowed preview enabled
@@ -198,10 +204,16 @@ class Animator():
             try:
                 # Run the simulation headless
                 while self.current_frame < self.total_frames:
+                    # Render onto MSAA buffer
+                    self.msaa_fbo.use()
                     self.render_frame()
 
+                    # Resolve MSAA into single fbo
+                    self.ctx.copy_framebuffer(self.resolve_fbo, self.msaa_fbo)
+
+                
                     # Read raw bytes from fbo
-                    raw_bytes = self.fbo.read(components=4)
+                    raw_bytes = self.resolve_fbo.read(components=4)
                     ffmpeg_proc.stdin.write(raw_bytes)
 
                     if self.current_frame % self.fps == 0:
