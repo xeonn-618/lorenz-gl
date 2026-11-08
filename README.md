@@ -13,23 +13,44 @@ pip install -r requirements.txt
 ```
 
 # Usage
+
 To run the simulation in the window: 
 ```bash
 python main.py
 ```
+Configure the project parameters in `config.toml`.
 
-List of flags:
+## Simulation parameters
 
-| Flag | Description |
-| :------------------ | :-------------------: |
-| --no-preview      |     Disable window preview; Run the simulation headless and **save** the .mp4 output.     |
-| -f, --fps       |     Set the fps of the animation; only affects headless video      |
-| -d, --duration       |     Video export time in seconds      |
-| -o, --output     |  Target output filename when running headless
+|  Parameter | Description                 |
+|:----------:|-----------------------------|
+| dt         | Time step value in seconds. |
+| tracers    | Number of tracer objects    |
+| trail_size | Length of a tracer's trail  |
+| sigma      | Prandtl number              |
+| rho        | Rayleigh number             |
+| beta       | Geometric factor            |
 
-Example usage:
-To render the simulation as a .mp4 video of 60 seconds at 30 fps and save to sim.mp4:
-```bash
-python main.py --no-preview --duration 60 --fps 30 --output "sim.mp4"
+## Rendering parameters
+
+|    Parameter    |  Description                                                     |
+|:---------------:|------------------------------------------------------------------|
+| width           | `int`: Screen width                                              |
+| height          | `int`: Screen height                                             |
+| fps             | `int`: FPS of saved video                                        |
+| duration        | `float`: Duration of saved video                                 |
+| samples         | `int`: Number of samples in MSAA (Multisampling)                 |
+| preview         | `boolean`: Renders a window if true, otherwise saves to a video. |
+| output_filename | `str`: Directory and filename of saved video                     |
+
+## Theme parameters
+The palette parameter contains a nested list, where each row list contains the [0, 1] normalized RGB values of tracers, which gets applied to each tracer in a circular looping fashion.
+
+```toml
+palette = [
+    [0.0, 1.0, 0.5],
+    [0.0, 0.8, 1.0],
+    [1.0, 0.2, 0.4],
+    [1.0, 0.7, 0.1]
+]
 ```
-
