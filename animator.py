@@ -3,6 +3,13 @@ import moderngl_window as mglw
 from tracer import TRAIL_SIZE
 import glm
 
+Trail_colors = [
+    (0.172, 0.145, 0.960), # Dark Blue
+    (0.521, 0.654, 1.000), # Light Blue
+    (0.949, 0.419, 0.745), # Light Pink
+    (0.929, 0.000, 0.572) # Hot Pink
+]
+
 class Window(mglw.WindowConfig):
     gl_version = (3, 3)
     title = "Lorenz Attractor"
@@ -52,11 +59,12 @@ class Animator():
             
             uniform vec3 offset;
             uniform mat4 transform;
-            
-            out vec3 aColor;
+            uniform int trail_len;
+
+            out float v_alpha;
 
             void main() {
-                aColor = vec3(0.0, 1.0, 1.0);
+                v_alpha = float(gl_VertexID) / max(float(trail_len - 1), 1.0);
                 
                 vec3 centered = aPos - vec3(0.0, 0.0, 25.0);
                 vec3 normalized = vec3(centered.x / (35.0 * 1.777), centered.z / 35.0, centered.y / 35.0);
@@ -66,12 +74,14 @@ class Animator():
             fragment_shader="""
             #version 330 core
             
-            in vec3 aColor;
+            in float v_alpha;
+
+            uniform vec3 uColor;
             
-            out vec3 fColor;
+            out vec4 fColor;
             
             void main() {
-                fColor = aColor;
+                fColor = vec4(uColor * v_alpha, v_alpha);
             }
             """)
 
@@ -80,6 +90,10 @@ class Animator():
 
         # Create the vertex array object
         self.vao = self.ctx.vertex_array(self.prog, [(self.vbo, '3f', 'aPos')])
+
+        # Enable blending with background
+        self.ctx.enable(moderngl.BLEND)
+        self.ctx.blend_func = (moderngl.ONE, moderngl.ONE)
 
         # Set offset
         self.prog['offset'].value = (0.1, 0.0, 0.0)
@@ -99,6 +113,14 @@ class Animator():
         # For each trail, write to vbo and rendef
         trails = self.sim.get_trails()
         for i, trail in enumerate(trails):
+            # Write trail color
+            uColor = Trail_colors[i % len(Trail_colors)]
+            self.prog['uColor'].value = uColor
+
+            # Send verticies len
+            self.prog['trail_len'].value = len(trail)
+
+            # Write to vbo and render
             self.vbo.write(trail.astype('f4').tobytes())
             self.vao.render(moderngl.LINE_STRIP, vertices=len(trail))
 
