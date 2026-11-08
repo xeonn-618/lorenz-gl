@@ -18,18 +18,22 @@ To run the simulation in the window:
 ```bash
 python main.py
 ```
+
 Configure the project parameters in `config.toml`.
+
+To change the config, edit the `load_config()` line in main.py
+with the desired .toml filename.
 
 ## Simulation parameters
 
 |  Parameter | Description                 |
 |:----------:|-----------------------------|
-| dt         | Time step value in seconds. |
-| tracers    | Number of tracer objects    |
-| trail_size | Length of a tracer's trail  |
-| sigma      | Prandtl number              |
-| rho        | Rayleigh number             |
-| beta       | Geometric factor            |
+| dt         | `float`: Time step value in seconds. |
+| tracers    | `int`: Number of tracer objects    |
+| trail_size | `int`: Length of a tracer's trail  |
+| sigma      | `float`: Prandtl number              |
+| rho        | `float`: Rayleigh number             |
+| beta       | `float`: Geometric factor            |
 
 ## Rendering parameters
 
