@@ -2,6 +2,8 @@ import moderngl
 import moderngl_window as mglw
 from tracer import TRAIL_SIZE
 import glm
+import subprocess
+
 
 # Trail_colors = [
 #     (0.172, 0.145, 0.960), # Dark Blue
@@ -14,6 +16,25 @@ Trail_colors = [
     (0.000, 1.000, 0.000), # Neon Green
     (0.000, 0.000, 1.000), # Dark Green
 ]
+
+def create_ffmpeg_subprocess(output_filename, width, height, fps):
+    cmd = [
+    'ffmpeg',
+    '-y',                         # Overwrite output without asking
+    '-f', 'rawvideo',             # Input is raw uncompressed pixel data
+    '-vcodec', 'rawvideo',
+    '-s', f'{width}x{height}',    # Frame resolution
+    '-pix_fmt', 'rgba',           # ModernGL reads out RGBA
+    '-r', str(fps),               # Input frame rate
+    '-i', '-',                    # Read input directly from stdin pipe
+    '-c:v', 'libx264',            # Standard H.264 video codec
+    '-pix_fmt', 'yuv420p',        # Pixel format compatible with all players
+    '-preset', 'fast',
+    '-crf', '18',                 # Visually lossless quality
+    output_filename
+    ]
+    return subprocess.Popen(cmd, stdin=subprocess.PIPE)
+
 
 class Window(mglw.WindowConfig):
     gl_version = (3, 3)
@@ -34,16 +55,17 @@ class Window(mglw.WindowConfig):
 
     def on_render(self, time: float, frametime: float):
         # Tell Animator to run and render the scene
-        self.animator.render_frame(time)
+        self.animator.render_frame()
 
 
 class Animator():
-    def __init__(self, sim, fps, duration, preview=True):
+    def __init__(self, sim, fps, duration, preview=True, output_filename='outputs/Lorenz Attractor.mp4'):
         self.sim = sim
         self.duration = duration
         self.preview = preview
         self.fps = fps
         self.ctx = None
+        self.output_filename = output_filename
 
         # Initalize Frames
         self.total_frames = int(duration * fps)
@@ -125,7 +147,7 @@ class Animator():
         trans = glm.rotate(trans, 1, glm.vec3(0.5, 0.5, 0.0))
         self.prog['transform'].write(trans.to_bytes())
 
-    def render_frame(self, time: float):
+    def render_frame(self):
         # Update the sim
         self.sim.update()
 
@@ -149,6 +171,13 @@ class Animator():
         # Increment frame
         self.current_frame += 1
 
+
+    def setup_headless(self):
+        # Create a window
+        self.color_rb = self.ctx.renderbuffer((self.width, self.height))
+        self.fbo = self.ctx.framebuffer(color_attachments=[self.color_rb])
+        self.fbo.use()
+
     def run(self):
         # If windowed preview enabled
         if self.preview:
@@ -157,7 +186,30 @@ class Animator():
 
         # If not windowed preview enabled
         else:
-            # Run the simulation headless
-            while self.current_frame < self.total_frames:
-                self.render_frame()
+            self.ctx = moderngl.create_context(standalone=True)
+            self.setup_headless()
+            self.setup_pipeline()
+
+            # Start ffmpeg pipe
+            ffmpeg_proc = create_ffmpeg_subprocess(self.output_filename, self.width, self.height, self.fps)
+
+            print(f"Exporting total frames {self.total_frames} to {self.output_filename}")
+
+            try:
+                # Run the simulation headless
+                while self.current_frame < self.total_frames:
+                    self.render_frame()
+
+                    # Read raw bytes from fbo
+                    raw_bytes = self.fbo.read(components=4)
+                    ffmpeg_proc.stdin.write(raw_bytes)
+
+                    if self.current_frame % self.fps == 0:
+                        progress = (self.current_frame / self.total_frames)  * 100
+                        print(f"Progress: {progress:.1f}% | Frame: {self.current_frame} / {self.total_frames}")
+
+            finally:
+                ffmpeg_proc.stdin.close()
+                ffmpeg_proc.wait()
+                print("Export Complete!")
         
