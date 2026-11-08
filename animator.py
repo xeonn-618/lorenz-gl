@@ -1,6 +1,5 @@
 import moderngl
 import moderngl_window as mglw
-from tracer import TRAIL_SIZE
 import glm
 import subprocess
 
@@ -12,10 +11,6 @@ import subprocess
 #     (0.929, 0.000, 0.572) # Hot Pink
 # ]
 
-Trail_colors = [
-    (0.000, 1.000, 0.000), # Neon Green
-    (0.000, 0.000, 1.000), # Dark Green
-]
 
 def create_ffmpeg_subprocess(output_filename, width, height, fps):
     cmd = [
@@ -59,21 +54,27 @@ class Window(mglw.WindowConfig):
 
 
 class Animator():
-    def __init__(self, sim, fps, duration, preview=True, output_filename='outputs/Lorenz Attractor.mp4'):
+    def __init__(self, sim, cfg: dict):
+        r_cfg = cfg['rendering']
+
         self.sim = sim
-        self.duration = duration
-        self.preview = preview
-        self.fps = fps
+        self.duration = r_cfg['duration']
+        self.samples = r_cfg['samples']
+        self.preview = r_cfg['preview']
+        self.fps = r_cfg['fps']
         self.ctx = None
-        self.output_filename = output_filename
+        self.output_filename = r_cfg['output_filename']
 
         # Initalize Frames
-        self.total_frames = int(duration * fps)
+        self.total_frames = int(self.duration * self.fps)
         self.current_frame = 0
 
         # Initalize render sizes
-        self.width = 1920
-        self.height = 1080
+        self.width = r_cfg['width']
+        self.height = r_cfg['height']
+
+        # Load color palette
+        self.colors = [tuple(c) for c in cfg["theme"]["palette"]]
 
         # Inject self into window as attribute 
         Window.animator = self
@@ -124,7 +125,7 @@ class Animator():
             """)
 
         # Reserve VRAM for 2000 rows of 3 coordinates of 4 bytes each
-        self.vbo = self.ctx.buffer(reserve=TRAIL_SIZE * 3 * 4)
+        self.vbo = self.ctx.buffer(reserve=self.sim.trail_size * 3 * 4)
 
         # Create the vertex array object
         self.vao = self.ctx.vertex_array(self.prog, [(self.vbo, '3f', 'aPos')])
@@ -158,7 +159,7 @@ class Animator():
         trails = self.sim.get_trails()
         for i, trail in enumerate(trails):
             # Write trail color
-            uColor = Trail_colors[i % len(Trail_colors)]
+            uColor = self.colors[i % len(self.colors)]
             self.prog['uColor'].value = uColor
 
             # Send verticies len

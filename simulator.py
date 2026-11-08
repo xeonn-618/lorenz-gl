@@ -2,16 +2,18 @@ import numpy as np
 from tracer import Tracer
 
 class Simulator():
-    def __init__(self, sigma, rho, beta, dt):
+    def __init__(self, sim_cfg: dict):
 
         # Universe Lorenz Parameters
-        self.sigma = sigma
-        self.rho = rho
-        self.beta = beta
+        self.sigma = sim_cfg['sigma']
+        self.rho = sim_cfg['rho']
+        self.beta = sim_cfg['beta']
+        self.trail_size = sim_cfg['trail_size']
+
 
         # Time 
         self.time = 0.0
-        self.dt = dt
+        self.dt = sim_cfg['dt']
 
         # Tracer Object Storage
         self.tracers = []
@@ -20,7 +22,7 @@ class Simulator():
     def add_tracer(self, x, y, z):
 
         # Create and add new tracer 
-        new_tracer  = Tracer(self.sigma, self.rho, self.beta, x, y, z)
+        new_tracer  = Tracer(self.sigma, self.rho, self.beta, x, y, z, self.trail_size)
         self.tracers.append(new_tracer)
 
     def get_trails(self):

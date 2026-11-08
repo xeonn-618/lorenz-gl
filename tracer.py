@@ -1,15 +1,16 @@
 import numpy as np
 
-TRAIL_SIZE = 2000
-RING_BUFFER = TRAIL_SIZE
+
 
 class Tracer():
-    def __init__(self, sigma, rho, beta, x, y, z):
+    def __init__(self, sigma, rho, beta, x, y, z, trail_size):
 
         # Lorenz Parameters
         self.sigma = sigma
         self.rho = rho
         self.beta = beta
+
+        self.trail_size = trail_size
         
         # Initalize time
         self.t = 0
@@ -18,7 +19,7 @@ class Tracer():
         self.tracer = np.array([x, y, z], dtype=np.float64)
 
         # Keep coordinate history in ring buffer (N, 3)
-        self.history = np.zeros(shape=(RING_BUFFER, 3), dtype=np.float64)
+        self.history = np.zeros(shape=(self.trail_size, 3), dtype=np.float64)
 
         # Initialize ring buffer head position
         self.head = 0
@@ -42,7 +43,7 @@ class Tracer():
         self.history[self.head, :] = self.tracer
 
         #   - Increment head position
-        self.head = (self.head + 1) % RING_BUFFER
+        self.head = (self.head + 1) % self.trail_size
         self.count += 1
 
         # Update time
@@ -50,7 +51,7 @@ class Tracer():
 
     def get_trail(self):
 
-        if self.count <= RING_BUFFER:
+        if self.count <= self.trail_size:
             # [Start -> Head-1] | Head part writing over zeros
             a1 = self.history[:self.head, :]
 
