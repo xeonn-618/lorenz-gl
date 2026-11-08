@@ -20,6 +20,9 @@ class Window(mglw.WindowConfig):
     title = "Lorenz Attractor"
     window_size = (1920, 1080)
 
+    # 16x MSAA
+    samples = 16
+
     def __init__(self, **kwargs):
             super().__init__(**kwargs)
 
@@ -91,7 +94,7 @@ class Animator():
             void main() {
                 float depth = clamp((30.0 - v_pos.y) / 60.0, 0.2, 1.0);
 
-                float depthIntensity = pow(depth, 1.5);
+                float depthIntensity = pow(depth, 1.1);
 
                 vec3 litColor = uColor * depthIntensity;
                 fColor = vec4(litColor * v_alpha, v_alpha);
@@ -104,9 +107,15 @@ class Animator():
         # Create the vertex array object
         self.vao = self.ctx.vertex_array(self.prog, [(self.vbo, '3f', 'aPos')])
 
+        # Modify line width
+        self.ctx.line_width = 1.5
+
         # Enable blending with background
         self.ctx.enable(moderngl.BLEND)
         self.ctx.blend_func = (moderngl.ONE, moderngl.ONE)
+
+        # Enable mutlisampling
+        self.ctx.multisample = True
 
         # Set offset
         self.prog['offset'].value = (0.0, 0.0, 0.0)
