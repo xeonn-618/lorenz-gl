@@ -3,11 +3,16 @@ import moderngl_window as mglw
 from tracer import TRAIL_SIZE
 import glm
 
+# Trail_colors = [
+#     (0.172, 0.145, 0.960), # Dark Blue
+#     (0.521, 0.654, 1.000), # Light Blue
+#     (0.949, 0.419, 0.745), # Light Pink
+#     (0.929, 0.000, 0.572) # Hot Pink
+# ]
+
 Trail_colors = [
-    (0.172, 0.145, 0.960), # Dark Blue
-    (0.521, 0.654, 1.000), # Light Blue
-    (0.949, 0.419, 0.745), # Light Pink
-    (0.929, 0.000, 0.572) # Hot Pink
+    (0.000, 1.000, 0.000), # Neon Green
+    (0.000, 0.000, 1.000), # Dark Green
 ]
 
 class Window(mglw.WindowConfig):
@@ -62,26 +67,34 @@ class Animator():
             uniform int trail_len;
 
             out float v_alpha;
-
+            out vec3 v_pos;
+            
             void main() {
                 v_alpha = float(gl_VertexID) / max(float(trail_len - 1), 1.0);
                 
                 vec3 centered = aPos - vec3(0.0, 0.0, 25.0);
                 vec3 normalized = vec3(centered.x / (35.0 * 1.777), centered.z / 35.0, centered.y / 35.0);
                 gl_Position = transform * vec4(normalized + offset, 1.0);
+                v_pos = gl_Position.xyz;
             }
             ''',
             fragment_shader="""
             #version 330 core
             
             in float v_alpha;
+            in vec3 v_pos;
 
             uniform vec3 uColor;
             
             out vec4 fColor;
             
             void main() {
-                fColor = vec4(uColor * v_alpha, v_alpha);
+                float depth = clamp((30.0 - v_pos.y) / 60.0, 0.2, 1.0);
+
+                float depthIntensity = pow(depth, 1.5);
+
+                vec3 litColor = uColor * depthIntensity;
+                fColor = vec4(litColor * v_alpha, v_alpha);
             }
             """)
 
@@ -96,7 +109,7 @@ class Animator():
         self.ctx.blend_func = (moderngl.ONE, moderngl.ONE)
 
         # Set offset
-        self.prog['offset'].value = (0.1, 0.0, 0.0)
+        self.prog['offset'].value = (0.0, 0.0, 0.0)
 
         # Create transformation matrix
         trans = glm.mat4(1.0)
