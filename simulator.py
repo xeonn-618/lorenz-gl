@@ -25,6 +25,12 @@ class Simulator():
         new_tracer  = Tracer(self.sigma, self.rho, self.beta, x, y, z, self.trail_size)
         self.tracers.append(new_tracer)
 
+    def create_tracers(self, n: int):
+        # Factor
+        f = 2.0
+        for i in range(n):
+            self.add_tracer(np.random.randn()*f, np.random.randn()*f, np.random.randn()*f)
+
     def get_trails(self):
         """ Return all the tracers' trails in a list
         [tracer1_arr, tracer2_arr, ...]"""
