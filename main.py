@@ -10,19 +10,15 @@ def load_config(config_path="config.toml") -> dict:
         return tomllib.load(f)
 
 def main():
-    cfg = load_config("config.toml")
+    cfg = load_config("presets/cyberpink.toml")
 
 
     # Create simulator universe
     simulator = Simulator(cfg['simulation'])
 
-    # Add initial tracer
-    simulator.add_tracer(0.0, 1.0, 1.0)
-    simulator.add_tracer(0.0, 1.0, 0.0)
-    simulator.add_tracer(0.0, 0.0, 1.0)
-    simulator.add_tracer(1.0, 0.0, 1.0)
-    simulator.add_tracer(1.0, 0.0, 0.0)
-
+    # Create tracers
+    simulator.create_tracers(cfg['simulation']['tracers'])
+    
     # Run the simulation
     anim = Animator(simulator, cfg)
     anim.run()

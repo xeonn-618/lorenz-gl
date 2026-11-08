@@ -1,5 +1,6 @@
 [simulation]
 dt = 0.01
+tracers = 10
 trail_size = 2000
 sigma = 10.0
 rho = 28.0
@@ -11,8 +12,8 @@ height = 1080
 fps = 60
 duration = 15.0
 samples = 16
-preview = true
-output_filename = "outputs/Lorenz Attractor.mp4"
+preview = false
+output_filename = "outputs/Lorenz_t1.mp4"
 
 [theme]
 palette = [

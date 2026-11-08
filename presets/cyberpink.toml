@@ -1,0 +1,24 @@
+[simulation]
+dt = 0.01
+tracers = 10
+trail_size = 2000
+sigma = 10.0
+rho = 28.0
+beta = 2.66666
+
+[rendering]
+width = 1920
+height = 1080
+fps = 60
+duration = 15.0
+samples = 16
+preview = true
+output_filename = "outputs/Lorenz_t1.mp4"
+
+[theme]
+palette = [
+    [1.000, 0.050, 0.600],  # Punchy Hot Pink
+    [0.950, 0.200, 0.850],  # Neon Fuchsia / Magenta
+    [0.000, 0.950, 1.000],  # Cold Cyan
+    [0.700, 1.000, 0.000]   # Acid Chartreuse / Neon Lime
+]
