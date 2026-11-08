@@ -19,5 +19,5 @@ simulator.add_tracer(1.0, 0.0, 1.0)
 simulator.add_tracer(1.0, 0.0, 0.0)
 
 # Run the simulation
-anim = Animator(simulator, 60, 10, False)
+anim = Animator(simulator, 60, 30, False)
 anim.run()

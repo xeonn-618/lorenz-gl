@@ -36,7 +36,7 @@ class Simulator():
     def update(self):
 
         # DEBUG
-        print(f' TIME : {self.time:.3f}')
+        # print(f' TIME : {self.time:.3f}')
 
         # Update all tracers
         for tracer in self.tracers:
