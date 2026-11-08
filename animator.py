@@ -188,7 +188,7 @@ class Animator():
         # If windowed preview enabled
         if self.preview:
             # Start and run the window loop
-            mglw.run_window_config(Window)
+            mglw.run_window_config(Window, args=[])
 
         # If not windowed preview enabled
         else:
