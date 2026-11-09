@@ -34,16 +34,13 @@ def create_ffmpeg_subprocess(output_filename, width, height, fps):
 class Window(mglw.WindowConfig):
     gl_version = (3, 3)
     title = "Lorenz Attractor"
-    window_size = (1920, 1080)
-
-    # 16x MSAA
-    samples = 16
 
     def __init__(self, **kwargs):
             super().__init__(**kwargs)
 
             # Pass the created Window context back to the animator class
             self.animator.ctx = self.ctx
+
 
             # Tell the animator to setup the graphics pipeline
             self.animator.setup_pipeline()
@@ -76,8 +73,10 @@ class Animator():
         # Load color palette
         self.colors = [tuple(c) for c in cfg["theme"]["palette"]]
 
-        # Inject self into window as attribute 
+        # Init preview window
         Window.animator = self
+        Window.window_size = (self.width, self.height)
+        Window.samples = self.samples
 
 
     def setup_pipeline(self):
