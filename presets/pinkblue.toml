@@ -12,9 +12,9 @@ height = 1080
 rotate = [0.0, 1.0, 0.0]
 rot_speed = 0.1
 fps = 60
-duration = 15.0
+duration = 6
 samples = 16
-preview = true
+preview = false
 output_filename = "outputs/Lorenz_t1.mp4"
 
 [theme]

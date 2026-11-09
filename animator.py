@@ -25,7 +25,8 @@ def create_ffmpeg_subprocess(output_filename, width, height, fps):
     '-c:v', 'libx264',            # Standard H.264 video codec
     '-pix_fmt', 'yuv420p',        # Pixel format compatible with all players
     '-preset', 'fast',
-    '-crf', '18',                 # Visually lossless quality
+    '-crf', '14',                 # Visually lossless quality
+    '-vf','vflip',                # Flip the video vertically (adjust for coordinate space differences b/w mgl)
     output_filename
     ]
     return subprocess.Popen(cmd, stdin=subprocess.PIPE)
@@ -169,7 +170,6 @@ class Animator():
 
             # Create transformation matrix
             trans = glm.mat4(1.0)
-            trans = glm.translate(trans, glm.vec3(0.0, 0.0, 0.0))
             trans = glm.rotate(trans, time * self.rot_speed, glm.vec3(self.rotate[0], self.rotate[1], self.rotate[2]))
             self.prog['transform'].write(trans.to_bytes())
 
@@ -215,7 +215,7 @@ class Animator():
                 while self.current_frame < self.total_frames:
                     # Render onto MSAA buffer
                     self.msaa_fbo.use()
-                    self.render_frame(1/self.fps)
+                    self.render_frame(self.current_frame/self.fps)
 
                     # Resolve MSAA into single fbo
                     self.ctx.copy_framebuffer(self.resolve_fbo, self.msaa_fbo)
