@@ -1,6 +1,6 @@
 [simulation]
-dt = 0.01
-tracers = 10
+dt = 0.005
+tracers = 15
 trail_size = 800
 sigma = 10.0
 rho = 28.0
@@ -9,8 +9,8 @@ beta = 2.66666
 [rendering]
 width = 1920
 height = 1080
-rotate = [0.2, 1.0, 0.0]
-rot_speed = 0.0
+rotate = [0.0, 1.0, 0.0]
+rot_speed = 0.1
 fps = 60
 duration = 15.0
 samples = 16
