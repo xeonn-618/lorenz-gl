@@ -1,6 +1,6 @@
 # lorenz-gl
 
-A hardware-accelerated Lorenz attractor simulator written in Python using NumPy. The simulation uses moderngl, an OpenGL Python wrapper to render the simulation on the GPU and display it live in a window or even save it to a file using ffmpeg. The simulation. This project was created as a hobby project to generate video renders to use as a video wallpaper. 
+A hardware-accelerated Lorenz attractor simulator written in Python using NumPy. The simulation uses moderngl, an OpenGL Python wrapper to render the simulation on the GPU and display it live in a window or even save it to a file using ffmpeg. This project was created as a hobby project to generate video renders to use as a video wallpaper. 
 
 # Installation
 
