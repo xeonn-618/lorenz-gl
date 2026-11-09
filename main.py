@@ -10,7 +10,7 @@ def load_config(config_path="config.toml") -> dict:
         return tomllib.load(f)
 
 def main():
-    cfg = load_config("config.toml")
+    cfg = load_config("presets/pinkblue.toml")
 
 
     # Create simulator universe
