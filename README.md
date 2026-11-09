@@ -60,3 +60,7 @@ palette = [
     [1.0, 0.7, 0.1]
 ]
 ```
+The bg parameter takes a tuple of length 3 with RGB values normalized between 0 and 1 respectively. It changes the background color of the render.
+```toml
+bg = [0.1, 0.1, 0.1]
+```

@@ -77,6 +77,9 @@ class Animator():
         # Load color palette
         self.colors = [tuple(c) for c in cfg["theme"]["palette"]]
 
+        # Load BG Color
+        self.bg = cfg["theme"]["bg"]
+
         # Init preview window
         Window.animator = self
         Window.window_size = (self.width, self.height)
@@ -152,7 +155,7 @@ class Animator():
         self.sim.update()
 
          # Clear canvas
-        self.ctx.clear(0.1, 0.1, 0.1, 1.0)
+        self.ctx.clear(self.bg[0], self.bg[1], self.bg[2], 1.0)
 
         # For each trail, write to vbo and rendef
         trails = self.sim.get_trails()

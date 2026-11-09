@@ -24,3 +24,4 @@ palette = [
     [1.000, 0.350, 0.000],  # Tactical Hazard Orange
     [0.900, 0.050, 0.550]   # Hot Magenta Accents
 ]
+bg = [0.1, 0.1, 0.1]

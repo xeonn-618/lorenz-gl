@@ -24,3 +24,4 @@ palette = [
     [0.000, 0.900, 0.650],  # Oscilloscope Teal
     [0.020, 0.550, 0.200]   # Deep Shadow Phosphor
 ]
+bg = [0.1, 0.1, 0.1]

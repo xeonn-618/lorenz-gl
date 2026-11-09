@@ -24,3 +24,4 @@ palette = [
     [0.000, 0.950, 1.000],  # Cold Cyan
     [0.700, 1.000, 0.000]   # Acid Chartreuse / Neon Lime
 ]
+bg = [0.1, 0.1, 0.1]
