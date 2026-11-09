@@ -47,7 +47,7 @@ class Window(mglw.WindowConfig):
 
     def on_render(self, time: float, frametime: float):
         # Tell Animator to run and render the scene
-        self.animator.render_frame()
+        self.animator.render_frame(time)
 
 
 class Animator():
@@ -69,6 +69,10 @@ class Animator():
         # Initalize render sizes
         self.width = r_cfg['width']
         self.height = r_cfg['height']
+
+        # Rotate axis
+        self.rotate = r_cfg['rotate']
+        self.rot_speed = r_cfg['rot_speed']
 
         # Load color palette
         self.colors = [tuple(c) for c in cfg["theme"]["palette"]]
@@ -142,12 +146,8 @@ class Animator():
         # Set offset
         self.prog['offset'].value = (0.0, 0.0, 0.0)
 
-        # Create transformation matrix
-        trans = glm.mat4(1.0)
-        trans = glm.rotate(trans, 1, glm.vec3(0.5, 0.5, 0.0))
-        self.prog['transform'].write(trans.to_bytes())
 
-    def render_frame(self):
+    def render_frame(self, time: float):
         # Update the sim
         self.sim.update()
 
@@ -163,6 +163,12 @@ class Animator():
 
             # Send verticies len
             self.prog['trail_len'].value = len(trail)
+
+            # Create transformation matrix
+            trans = glm.mat4(1.0)
+            trans = glm.translate(trans, glm.vec3(0.0, 0.0, 0.0))
+            trans = glm.rotate(trans, time * self.rot_speed, glm.vec3(self.rotate[0], self.rotate[1], self.rotate[2]))
+            self.prog['transform'].write(trans.to_bytes())
 
             # Write to vbo and render
             self.vbo.write(trail.astype('f4').tobytes())
@@ -206,7 +212,7 @@ class Animator():
                 while self.current_frame < self.total_frames:
                     # Render onto MSAA buffer
                     self.msaa_fbo.use()
-                    self.render_frame()
+                    self.render_frame(1/self.fps)
 
                     # Resolve MSAA into single fbo
                     self.ctx.copy_framebuffer(self.resolve_fbo, self.msaa_fbo)

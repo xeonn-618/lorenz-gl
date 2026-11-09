@@ -1,7 +1,7 @@
 [simulation]
 dt = 0.01
 tracers = 10
-trail_size = 2000
+trail_size = 800
 sigma = 10.0
 rho = 28.0
 beta = 2.66666
@@ -9,11 +9,13 @@ beta = 2.66666
 [rendering]
 width = 1920
 height = 1080
+rotate = [0.2, 1.0, 0.0]
+rot_speed = 0.5
 fps = 60
 duration = 15.0
 samples = 16
-preview = false
-output_filename = "outputs/Lorenz_t1.mp4"
+preview = true
+output_filename = "outputs/Lorenz_t2.mp4"
 
 [theme]
 palette = [
