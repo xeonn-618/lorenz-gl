@@ -41,6 +41,8 @@ with the desired .toml filename.
 |:---------------:|------------------------------------------------------------------|
 | width           | `int`: Screen width                                              |
 | height          | `int`: Screen height                                             |
+| rotate          | `list`: [x, y, z] where each is a float. This vector represents the axis of rotation                |
+| rot_speed       | `float`: Speed of rotation. Set 0.0 to turn off rotation                                             |
 | fps             | `int`: FPS of saved video                                        |
 | duration        | `float`: Duration of saved video                                 |
 | samples         | `int`: Number of samples in MSAA (Multisampling)                 |
